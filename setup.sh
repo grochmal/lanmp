@@ -10,13 +10,16 @@ echo 'DONE'
 
 echo 'Install LANMP stack... '
 echo '------------------------'
-read -s "MySQL Password: " mysqlPassword
-read -s "Retype password: " mysqlPasswordRetype
+echo -n "MySQL Password: "
+read -s mysqlPassword
+echo -n "Retype password: "
+read -s mysqlPasswordRetype
 
 while [ "${mysqlPassword}" = "" ] || [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; do
-    read -s "MySQL Password: " mysqlPassword
-    read -s "Retype password: " mysqlPasswordRetype
-
+    echo -n "MySQL Password: "
+    read -s mysqlPassword
+    echo -n "Retype password: "
+    read -s mysqlPasswordRetype
     if [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; then
       echo "Passwords do not match!"
     fi
