@@ -8,16 +8,12 @@ echo -n 'Upgrading system... '
 sudo yum upgrade -y >/dev/null
 echo 'DONE'
 
-echo -n 'Adding Nginx yum repository... ' # https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7
-sudo yum install http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
-echo 'DONE'
-
 echo 'Install LANMP stack... '
 echo '------------------------'
 read -p "MySQL Password: " mysqlPassword
 read -p "Retype password: " mysqlPasswordRetype
 
-sudo yum install -y httpd nginx php mariadb-server mariadb nano expect >/dev/null
+sudo yum install -y httpd nginx php mariadb-server mariadb nano expect http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
 
 echo 'Changing Apache port to 8080'
 sudo sed -i "s/Listen 80/Listen 8080/g" /etc/httpd/conf/httpd.conf
@@ -122,7 +118,7 @@ expect EOF" >/dev/null
 echo "DONE"
 
 echo -n 'Housekeeping... '
-sudo yum remove -y expecting >/dev/null
+sudo yum remove -y expect >/dev/null
 sudo yum clean all >/dev/null
 echo 'DONE'
 
