@@ -80,6 +80,10 @@ sudo systemctl start nginx.service
 sudo systemctl enable nginx.service
 echo 'DONE'
 
+echo -n 'Adding SELinux rule to allow nginx network access... '
+sudo setsebool -P httpd_can_network_connect 1
+echo 'DONE'
+
 while [[ "$mysqlPassword" = "" && "$mysqlPassword" != "$mysqlPasswordRetype" ]]; do
     echo -n "Please enter the desired mysql root password: "
     stty -echo

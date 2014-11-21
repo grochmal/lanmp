@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 read -p "Virtualhost domain name: " VHOST
 
 HTTPD=/etc/httpd/conf.d/${VHOST}.conf
@@ -12,12 +13,13 @@ then
 echo "it already exists, please chose a different one!"
 exit 1
 else
-echo "it looks legit, creating supporting files and folders..."
+echo -n "it looks legit, creating supporting files and folders... "
 sudo touch ${HTTPD}
 sudo touch ${NGINX}
 sudo mkdir -p ${WWW}
 sudo touch ${INDEX}
 fi
+echo "DONE"
 
 sudo tee -a ${HTTPD} <<EOF
 <VirtualHost *:8080>
@@ -67,10 +69,9 @@ sudo tee -a ${INDEX} <<EOF
 </html>
 EOF
 
-clear
-echo -n 'Restarting httpd and nginx...'
-sudo service httpd restart
-sudo service nginx restart
-echo 'DONE'
+# echo -n 'Restarting httpd and nginx...'
+# sudo service httpd restart
+# sudo service nginx restart
+# echo 'DONE'
 
 echo "All done, ${VHOST} is now setup"
