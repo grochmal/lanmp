@@ -13,6 +13,20 @@ echo '------------------------'
 read -p "MySQL Password: " mysqlPassword
 read -p "Retype password: " mysqlPasswordRetype
 
+while [[ ${mysqlPassword} = "" || ${mysqlPassword} != ${mysqlPasswordRetype} ]]; do
+    echo -n "Please enter the desired MySQL root password: "
+    stty -echo
+    read -r mysqlPassword
+    echo
+    echo -n "Retype password: "
+    read -r mysqlPasswordRetype
+    stty echo
+    echo
+    if [ ${mysqlPassword} != ${mysqlPasswordRetype} ]; then
+      echo "Passwords do not match!"
+    fi
+done
+
 sudo yum install -y httpd nginx php mariadb-server mariadb nano expect http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
 
 echo 'Changing Apache port to 8080'
@@ -83,20 +97,6 @@ echo 'DONE'
 echo -n 'Adding SELinux rule to allow nginx network access... '
 sudo setsebool -P httpd_can_network_connect 1
 echo 'DONE'
-
-while [[ "$mysqlPassword" = "" && "$mysqlPassword" != "$mysqlPasswordRetype" ]]; do
-    echo -n "Please enter the desired mysql root password: "
-    stty -echo
-    read -r mysqlPassword
-    echo
-    echo -n "Retype password: "
-    read -r mysqlPasswordRetype
-    stty echo
-    echo
-    if [ "$mysqlPassword" != "$mysqlPasswordRetype" ]; then
-      echo "Passwords do not match!"
-    fi
-done
 
 echo -n "Setting up MySQL password... "
 expect -c "
