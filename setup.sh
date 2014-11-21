@@ -12,17 +12,21 @@ echo 'Install LANMP stack... '
 echo '------------------------'
 echo -n "MySQL Password: "
 read -s mysqlPassword
+echo
 echo -n "Retype password: "
 read -s mysqlPasswordRetype
+echo
 
 while [ "${mysqlPassword}" = "" ] || [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; do
-    echo -n "MySQL Password: "
-    read -s mysqlPassword
-    echo -n "Retype password: "
-    read -s mysqlPasswordRetype
     if [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; then
       echo "Passwords do not match!"
     fi
+    echo -n "MySQL Password: "
+    read -s mysqlPassword
+    echo
+    echo -n "Retype password: "
+    read -s mysqlPasswordRetype
+    echo
 done
 
 sudo yum install -y httpd nginx php mariadb-server mariadb nano expect http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
