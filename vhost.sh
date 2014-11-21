@@ -4,6 +4,7 @@ read -p "Virtualhost domain name: " VHOST
 HTTPD=/etc/httpd/conf.d/${VHOST}.conf
 NGINX=/etc/nginx/conf.d/${VHOST}.conf
 WWW=/var/www/${VHOST}
+INDEX=/var/www/${VHOST}/index.html
 
 echo -n "Checking ${VHOST}... "
 if [[ -f ${HTTPD}  ||  -f ${NGINX}  ||  -d ${WWW} ]]
@@ -15,6 +16,7 @@ echo "it looks legit, creating supporting files and folders..."
 sudo touch ${HTTPD}
 sudo touch ${NGINX}
 sudo mkdir -p ${WWW}
+sudo touch ${INDEX}
 fi
 
 sudo tee -a ${HTTPD} <<EOF
@@ -59,10 +61,16 @@ server {
 }
 EOF
 
+sudo tee -a ${INDEX} <<EOF
+<html>
+    <h1>${VHOST}</h1>
+</html>
+EOF
+
 clear
 echo -n 'Restarting httpd and nginx...'
 sudo service httpd restart
 sudo service nginx restart
 echo 'DONE'
 
-echo 'All done, ${VHOST} is now setup'
+echo "All done, ${VHOST} is now setup"

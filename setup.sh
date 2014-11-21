@@ -27,7 +27,7 @@ sudo service httpd restart
 echo -n 'Setting up nginx.conf... '
 sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.old
 sudo touch /etc/nginx/nginx.conf
-sudo tee tee -a /etc/nginx/nginx.conf <<EOF
+sudo tee -a /etc/nginx/nginx.conf <<EOF
 worker_processes 4;
 pid /var/run/nginx.pid;
 
