@@ -84,23 +84,26 @@ sudo chkconfig httpd on
 sudo chkconfig nginx on
 echo 'DONE'
 
-echo 'Setting up MySQL passwords... '
+echo -n 'Adding SELinux rule to allow nginx network access... '
+sudo setsebool -P httpd_can_network_connect 1
+echo 'DONE'
+
 sudo /etc/init.d/mysqld restart
 while [[ "$mysqlPassword" = "" && "$mysqlPassword" != "$mysqlPasswordRetype" ]]; do
-  echo -n "Please enter the desired mysql root password: "
-  stty -echo
-  read -r mysqlPassword
-  echo
-  echo -n "Retype password: "
-  read -r mysqlPasswordRetype
-  stty echo
-  echo
-  if [ "$mysqlPassword" != "$mysqlPasswordRetype" ]; then
-    echo "Passwords do not match!"
-  fi
+    echo -n "Please enter the desired mysql root password: "
+    stty -echo
+    read -r mysqlPassword
+    echo
+    echo -n "Retype password: "
+    read -r mysqlPasswordRetype
+    stty echo
+    echo
+    if [ "$mysqlPassword" != "$mysqlPasswordRetype" ]; then
+      echo "Passwords do not match!"
+    fi
 done
 sudo /usr/bin/mysqladmin -u root password $mysqlPassword
 
 clear
-echo 'Okay.... apache, nginx, php and mysql is installed, running and set to your desired password'
+echo 'Okay... all done, have fun!'
 
