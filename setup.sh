@@ -76,7 +76,6 @@ http {
 }
 EOF
 sudo service nginx restart
-clear
 
 echo -n 'Adding services to start up... '
 sudo chkconfig mysql-server on
@@ -105,4 +104,3 @@ done
 sudo /usr/bin/mysqladmin -u root password $mysqlPassword
 
 echo 'Okay... all done, have fun!'
-
