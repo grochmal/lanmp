@@ -9,7 +9,7 @@ sudo yum upgrade -y >/dev/null
 echo 'DONE'
 
 echo -n 'Adding Nginx yum repository... ' # https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7
-sudo rpm -Uvh http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm
+sudo rpm -Uvh http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
 echo 'DONE'
 
 echo 'Install LANMP stack... '
@@ -17,11 +17,10 @@ echo '------------------------'
 read -p "MySQL Password: " mysqlPassword
 read -p "Retype password: " mysqlPasswordRetype
 
-sudo yum install -y httpd nginx php mysql mysql-server nano >/dev/null
+sudo yum install -y httpd nginx php mariadb-server mariadb nano expect >/dev/null
 
 echo 'Changing Apache port to 8080'
 sudo sed -i "s/Listen 80/Listen 8080/g" /etc/httpd/conf/httpd.conf
-sudo service httpd restart 
 
 echo 'Setting up nginx.conf'
 sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.old
@@ -75,19 +74,16 @@ http {
     include /etc/nginx/sites-enabled/*;
 }
 EOF
-sudo service nginx restart
 
-echo -n 'Adding services to start up... '
-sudo chkconfig mysql-server on
-sudo chkconfig httpd on
-sudo chkconfig nginx on
+echo -n 'Starting + adding to startup services... '
+sudo systemctl start mariadb.service
+sudo systemctl enable mariadb.service
+sudo systemctl start httpd.service
+sudo systemctl enable httpd.service
+sudo systemctl start nginx.service
+sudo systemctl enable nginx.service
 echo 'DONE'
 
-echo -n 'Adding SELinux rule to allow nginx network access... '
-sudo setsebool -P httpd_can_network_connect 1
-echo 'DONE'
-
-sudo /etc/init.d/mysqld restart
 while [[ "$mysqlPassword" = "" && "$mysqlPassword" != "$mysqlPasswordRetype" ]]; do
     echo -n "Please enter the desired mysql root password: "
     stty -echo
@@ -101,6 +97,33 @@ while [[ "$mysqlPassword" = "" && "$mysqlPassword" != "$mysqlPasswordRetype" ]];
       echo "Passwords do not match!"
     fi
 done
-sudo /usr/bin/mysqladmin -u root password $mysqlPassword
+
+echo -n "Setting up MySQL password... "
+expect -c "
+set timeout 10
+spawn mysql_secure_installation
+expect \"Enter current password for root (enter for none):\"
+send \"\r\"
+expect \"Set root password?\"
+send \"y\r\"
+expect \"New password:\"
+send \"${mysqlPassword}\r\"
+expect \"Re-enter new password:\"
+send \"${mysqlPassword}\r\"
+expect \"Remove anonymous users?\"
+send \"y\r\"
+expect \"Disallow root login remotely?\"
+send \"y\r\"
+expect \"Remove test database and access to it?\"
+send \"y\r\"
+expect \"Reload privilege tables now?\"
+send \"y\r\"
+expect EOF" >/dev/null
+echo "DONE"
+
+echo -n 'Housekeeping... '
+sudo yum remove -y expecting >/dev/null
+sudo yum clean >/dev/null
+echo 'DONE'
 
 echo 'Okay... all done, have fun!'
