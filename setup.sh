@@ -9,7 +9,7 @@ sudo yum upgrade -y >/dev/null
 echo 'DONE'
 
 echo -n 'Adding Nginx yum repository... ' # https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7
-sudo rpm -Uvh http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
+sudo yum install http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
 echo 'DONE'
 
 echo 'Install LANMP stack... '
@@ -123,7 +123,7 @@ echo "DONE"
 
 echo -n 'Housekeeping... '
 sudo yum remove -y expecting >/dev/null
-sudo yum clean >/dev/null
+sudo yum clean all >/dev/null
 echo 'DONE'
 
 echo 'Okay... all done, have fun!'
