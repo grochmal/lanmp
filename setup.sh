@@ -10,18 +10,13 @@ echo 'DONE'
 
 echo 'Install LANMP stack... '
 echo '------------------------'
-read -p "MySQL Password: " mysqlPassword
-read -p "Retype password: " mysqlPasswordRetype
+read -s "MySQL Password: " mysqlPassword
+read -s "Retype password: " mysqlPasswordRetype
 
 while [ "${mysqlPassword}" = "" ] || [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; do
-    echo -n "Please enter the desired MySQL root password: "
-    stty -echo
-    read -r mysqlPassword
-    echo
-    echo -n "Retype password: "
-    read -r mysqlPasswordRetype
-    stty echo
-    echo
+    read -s "MySQL Password: " mysqlPassword
+    read -s "Retype password: " mysqlPasswordRetype
+
     if [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; then
       echo "Passwords do not match!"
     fi
