@@ -1,11 +1,11 @@
 #!/bin/bash
 clear
 echo -n 'Updating system... '
-sudo yum update -y > /dev/null
+sudo yum update -y >/dev/null
 echo 'DONE'
 
 echo -n 'Upgrading system... '
-sudo yum upgrade -y > /dev/null
+sudo yum upgrade -y >/dev/null
 echo 'DONE'
 
 echo -n 'Adding Nginx yum repository... ' # https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7
@@ -17,7 +17,7 @@ echo '------------------------'
 read -p "MySQL Password: " mysqlPassword
 read -p "Retype password: " mysqlPasswordRetype
 
-sudo yum install -y httpd nginx php mysql mysql-server nano > /dev/null
+sudo yum install -y httpd nginx php mysql mysql-server nano >/dev/null
 
 echo 'Changing Apache port to 8080'
 sudo sed -i "s/Listen 80/Listen 8080/g" /etc/httpd/conf/httpd.conf
