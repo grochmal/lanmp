@@ -13,7 +13,7 @@ echo '------------------------'
 read -p "MySQL Password: " mysqlPassword
 read -p "Retype password: " mysqlPasswordRetype
 
-while [[ ${mysqlPassword} = "" || ${mysqlPassword} != ${mysqlPasswordRetype} ]]; do
+while [ "${mysqlPassword}" = "" ] || [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; do
     echo -n "Please enter the desired MySQL root password: "
     stty -echo
     read -r mysqlPassword
@@ -22,7 +22,7 @@ while [[ ${mysqlPassword} = "" || ${mysqlPassword} != ${mysqlPasswordRetype} ]];
     read -r mysqlPasswordRetype
     stty echo
     echo
-    if [ ${mysqlPassword} != ${mysqlPasswordRetype} ]; then
+    if [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; then
       echo "Passwords do not match!"
     fi
 done
