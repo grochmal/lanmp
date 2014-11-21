@@ -1,5 +1,8 @@
 #!/bin/bash
 clear
+
+mysqlPassword=""
+
 echo -n 'Updating system... '
 sudo yum update -y >/dev/null
 echo 'DONE'
@@ -10,12 +13,6 @@ echo 'DONE'
 
 echo 'Install LANMP stack... '
 echo '------------------------'
-echo -n "MySQL Password: "
-read -s mysqlPassword
-echo
-echo -n "Retype password: "
-read -s mysqlPasswordRetype
-echo
 
 while [ "${mysqlPassword}" = "" ] || [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; do
     if [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; then
@@ -27,6 +24,9 @@ while [ "${mysqlPassword}" = "" ] || [ "${mysqlPassword}" != "${mysqlPasswordRet
     echo -n "Retype password: "
     read -s mysqlPasswordRetype
     echo
+    if [ "${mysqlPassword}" = "" ]; then
+      echo "Password cannot be empty!"
+    fi
 done
 
 sudo yum install -y httpd nginx php mariadb-server mariadb nano expect http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
