@@ -1,30 +1,29 @@
 #!/bin/bash
 clear
-echo 'Updating system...'
-sudo yum update -y
+echo -n 'Updating system... '
+sudo yum update -y > /dev/null
+echo 'DONE'
 
-clear
-echo 'Upgrading system...'
-sudo yum upgrade -y
+echo -n 'Upgrading system... '
+sudo yum upgrade -y > /dev/null
+echo 'DONE'
 
-clear
-echo 'Adding Nginx yum repository...' # https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7
+echo -n 'Adding Nginx yum repository... ' # https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7
 sudo rpm -Uvh http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm
+echo 'DONE'
 
-clear
-echo 'Going to install the LANMP stack on your machine, here we go...'
+echo 'Install LANMP stack... '
 echo '------------------------'
 read -p "MySQL Password: " mysqlPassword
 read -p "Retype password: " mysqlPasswordRetype
 
-sudo yum install -y httpd nginx php mysql mysql-server nano
+sudo yum install -y httpd nginx php mysql mysql-server nano > /dev/null
 
-clear
 echo 'Changing Apache port to 8080'
 sudo sed -i "s/Listen 80/Listen 8080/g" /etc/httpd/conf/httpd.conf
-sudo service httpd restart
+sudo service httpd restart 
 
-echo -n 'Setting up nginx.conf... '
+echo 'Setting up nginx.conf'
 sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.old
 sudo touch /etc/nginx/nginx.conf
 sudo tee -a /etc/nginx/nginx.conf <<EOF
@@ -77,7 +76,8 @@ http {
 }
 EOF
 sudo service nginx restart
-echo 'DONE'
+clear
+
 echo -n 'Adding services to start up... '
 sudo chkconfig mysql-server on
 sudo chkconfig httpd on
@@ -104,6 +104,5 @@ while [[ "$mysqlPassword" = "" && "$mysqlPassword" != "$mysqlPasswordRetype" ]];
 done
 sudo /usr/bin/mysqladmin -u root password $mysqlPassword
 
-clear
 echo 'Okay... all done, have fun!'
 
