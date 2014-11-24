@@ -14,22 +14,36 @@ echo 'DONE'
 echo 'Install LANMP stack... '
 echo '------------------------'
 
-while [ "${mysqlPassword}" = "" ] || [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; do
+ask_password() {
+  TTY=$(tty)
+  pass=$(cat <<EOF | pinentry 2>/dev/null | tail -n +6
+OPTION lc-ctype=$LANG
+OPTION ttyname=$TTY
+SETTITLE MySQL user
+SETPROMPT password:
+GETPIN
+EOF
+  )
+  echo $pass | sed -e 's/^D //' -e 's/ OK$//'
+  return 0
+}
+
+sudo yum install -y httpd nginx php mariadb-server mariadb nano expect pinentry http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
+
+while [ "x${mysqlPassword}" = "x" ] || [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; do
     if [ "${mysqlPassword}" != "${mysqlPasswordRetype}" ]; then
       echo "Passwords do not match!"
     fi
     echo -n "MySQL Password: "
-    read -s mysqlPassword
+    mysqlPassword=$(ask_password)
     echo
     echo -n "Retype password: "
-    read -s mysqlPasswordRetype
+    mysqlPasswordRetype=$(ask_password)
     echo
-    if [ "${mysqlPassword}" = "" ]; then
+    if [ "x${mysqlPassword}" = "x" ]; then
       echo "Password cannot be empty!"
     fi
 done
-
-sudo yum install -y httpd nginx php mariadb-server mariadb nano expect http://nginx.org/packages/rhel/7/x86_64/RPMS/nginx-1.6.2-1.el7.ngx.x86_64.rpm >/dev/null
 
 echo 'Changing Apache port to 8080'
 sudo sed -i "s/Listen 80/Listen 8080/g" /etc/httpd/conf/httpd.conf
@@ -129,3 +143,4 @@ sudo yum clean all >/dev/null
 echo 'DONE'
 
 echo 'Okay... all done, have fun!'
+
